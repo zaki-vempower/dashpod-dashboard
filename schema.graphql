@@ -1,0 +1,228 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+type AnalyticsValues {
+  entryX: Float
+  entryY: Float
+  isHit: String
+  podAddress: String
+  podColor: String
+  podName: String
+}
+
+type DashPod @model {
+  accountId: String!
+  createdAt: AWSDateTime
+  podMacId: String!
+  podName: String
+  podType: String
+  start_date: AWSDate
+  update_date: AWSDate
+  updatedAt: AWSDateTime
+}
+
+type Mutation {
+  createPods(dashPodInput: DashPodInput!): PodOutputResponse
+  createRecordActivity(registerActivityInput: RegisterActivityInput): PlayerResp
+  registerProfile(registerProfileInput: RegisterProfileInput): PlayerResp
+  signUp(registerProfileInput: SignUpProfileInput): PlayerResp
+  updateProfile(registerProfileInput: RegisterProfileInput): PlayerResp
+}
+
+type PlayerResp {
+  message: String
+  playerId: String
+  status: String
+}
+
+type PodOutputResponse {
+  message: String
+  status: String
+}
+
+type Query {
+  deleteProfile(playerId: String!): PlayerResp
+  getPodsByAccountId(accountId: String!): Response
+  getProfiles(accountId: String!, last_upd_time: String!): RegisterProfileGetResp
+  getRecordActivity(accountId: String!, last_upd_time: String!): RegisterActivityGetResp
+}
+
+type RegisterActivity {
+  accountId: String
+  activityDuration: String
+  activityId: String
+  activityName: String
+  analyticsValuesList: [AnalyticsValues]
+  avgTime: String
+  base: String
+  categoryId: String
+  categoryName: String
+  color: Int
+  colorCode: Int
+  currentMacId: String
+  dateAndTime: Long
+  gender: String
+  height: String
+  hitCount: Int
+  lastName: String
+  missCount: Int
+  playerAge: String
+  playerId: String
+  playerName: String
+  podName: String
+  podsCount: String
+  prevMacId: String
+  recordId: String
+  startTime: Long
+  weight: String
+}
+
+type RegisterActivityGetResp {
+  data: [RegisterActivity]
+  message: String
+  status: String
+}
+
+type RegisterProfile {
+  academyName: String
+  accountId: String!
+  areasOfIntrest: [String!]
+  buildingName: String
+  city: String
+  country: String
+  dob: String
+  emailId: String
+  firstName: String
+  gender: String
+  height: String
+  lastName: String
+  locality: String
+  location: String
+  mobileNumber: String
+  pinCode: String
+  playerId: String!
+  profileId: Int
+  state: String
+  street: String
+  updateInterval: String
+  updateMeasurements: String
+  weight: String
+}
+
+type RegisterProfileGetResp {
+  data: [RegisterProfile]
+  message: String
+  status: String
+}
+
+type Response {
+  data: [DashPod]
+  status: String
+}
+
+input AnalyticsValuesInput {
+  entryX: Float
+  entryY: Float
+  isHit: String
+  podAddress: String
+  podColor: String
+  podName: String
+}
+
+input DashPodInput {
+  accountId: String!
+  createdAt: AWSDateTime
+  podMacId: String!
+  podName: String
+  podType: String
+  start_date: AWSDate
+  update_date: AWSDate
+  updatedAt: AWSDateTime
+}
+
+input RegisterActivityInput {
+  accountId: String
+  activityDuration: String
+  activityId: String
+  activityName: String
+  analyticsValuesList: [AnalyticsValuesInput]
+  avgTime: String
+  base: String
+  categoryId: String
+  categoryName: String
+  color: Int
+  colorCode: Int
+  currentMacId: String
+  dateAndTime: Long
+  gender: String
+  height: String
+  hitCount: Int
+  lastName: String
+  missCount: Int
+  playerAge: String
+  playerId: String
+  playerName: String
+  podName: String
+  podsCount: String
+  prevMacId: String
+  recordId: String
+  startTime: Long
+  weight: String
+}
+
+input RegisterProfileInput {
+  academyName: String
+  accountId: String!
+  areasOfIntrest: [String!]
+  buildingName: String
+  city: String
+  country: String
+  dob: String
+  emailId: String
+  firstName: String
+  gender: String
+  height: String
+  lastName: String
+  locality: String
+  location: String
+  mobileNumber: String
+  pinCode: String
+  playerId: String!
+  profileId: Int
+  state: String
+  street: String
+  updateInterval: String
+  updateMeasurements: String
+  weight: String
+}
+
+input SignUpProfileInput {
+  academyName: String
+  accountId: String!
+  areasOfIntrest: [String!]
+  buildingName: String
+  city: String
+  country: String
+  dob: String
+  email: String!
+  emailId: String
+  firstName: String
+  gender: String
+  height: String
+  lastName: String
+  locality: String
+  location: String
+  mobileNumber: String
+  password: String!
+  pinCode: String
+  playerId: String!
+  profileId: Int
+  state: String
+  street: String
+  updateInterval: String
+  updateMeasurements: String
+  username: String!
+  weight: String
+}

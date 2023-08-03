@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-dashpodandroid-dev-130917-authRole",
+      "UnauthRoleArn": "arn:aws:iam::487032740293:role/amplify-dashpodandroid-dev-130917-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::487032740293:role/amplify-dashpodandroid-dev-130917-authRole",
+      "Region": "ap-south-1",
+      "DeploymentBucketName": "amplify-dashpodandroid-dev-130917-deployment",
+      "UnauthRoleName": "amplify-dashpodandroid-dev-130917-unauthRole",
+      "StackName": "amplify-dashpodandroid-dev-130917",
+      "StackId": "arn:aws:cloudformation:ap-south-1:487032740293:stack/amplify-dashpodandroid-dev-130917/51238fb0-cba9-11ed-b030-0a9b3be5226e",
+      "AmplifyAppId": "d3exm6w4z1bffc"
+    }
+  }
+}
