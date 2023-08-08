@@ -1,24 +1,20 @@
 import { useAtom } from 'jotai';
-import CardFour from '../../components/CardFour.tsx';
-import CardOne from '../../components/CardOne.tsx';
-import CardThree from '../../components/CardThree.tsx';
-import CardTwo from '../../components/CardTwo.tsx';
-import ChartOne from '../../components/ChartOne.tsx';
-import ChartThree from '../../components/ChartThree.tsx';
-import ChartTwo from '../../components/ChartTwo.tsx';
-import ChatCard from '../../components/ChatCard.tsx';
-import MapOne from '../../components/MapOne.tsx';
-import TableOne from '../../components/TableOne.tsx';
 // import { useAuth } from '../../hooks/useAuth.tsx';
 import { useEffect, useMemo, useState } from 'react';
 import { API, graphqlOperation } from 'aws-amplify';
 import GetRecordQuery from '../../graphqlQueries/GetRecordQuery.js';
-import { selectProfiles, useGraphData, useProfiles, userData } from '../../store/dashboardAtom.ts';
-import ReactApexChart from 'react-apexcharts';
+import { selectpodAddress, useGraphData, useProfiles, userData } from '../../store/dashboardAtom.ts';
 import ProfileAnalyticsCard from '../ProfileCards/ProfileAnalyticsCard.tsx';
-import { accountId } from '../../util.ts';
-import { Button } from '@aws-amplify/ui-react';
-import { format } from 'date-fns'
+import { Bashcolors } from '../../util.ts';
+import moment from 'moment';
+import DetailCard from './DetailCard.tsx';
+const containerProps = {
+  width: '100%',
+  height: 350,
+  // border: '1px solid black',
+};
+
+
 
 
 
@@ -26,8 +22,8 @@ const ECommerce = () => {
   const [graphData, setGraphData] = useAtom(useGraphData);
   const [getProfile,] = useAtom(useProfiles)
   const [user,] = useAtom(userData);
-  const [dateTime,] = useState(format(new Date(), 'yyyy-MM-dd')
-  )
+  const [dateTime,] = useState(moment().format('DD-MM-YYYY hh:mm a'))
+  const [podAddress,] = useAtom(selectpodAddress);
   // const [selectedProfiles,setselectProfiles] = useAtom(selectProfiles)
   // const { user, signOut } = useAuth();
 
@@ -42,37 +38,71 @@ const ECommerce = () => {
   //   });
   // }
   const getGraphDataFiltered = useMemo(() => {
-    let graphsNodes: any[] = []
-
+    let graphsNodes: any[] =[];
     if(Array.isArray(graphData) && graphData.length > 0) {
       if(getProfile.length > 0){
         for(let it of getProfile){
-          const filteredGraph = graphData.filter((item: any) => item.recordId === it)
-          graphsNodes = [...graphsNodes,...filteredGraph]
+          const filterGraph = graphData.filter((item: any) => item.recordId === it)
+          console.log('calculateAverage',graphsNodes,podAddress,graphData,it,filterGraph)
+          graphsNodes = [...graphsNodes,...filterGraph]
         }
+
+      graphsNodes = graphsNodes.map((item) => {
+        item.analyticsValuesList.sort((a:any, b: any) => (a.entryX > b.entryX ? 1 : -1))
+        return item
+      })
+      console.log('graphData123',graphData,graphsNodes)
+      graphsNodes = graphsNodes.map((item) => {
+        
+        if(podAddress !== 'All') {
+          console.log('podAddress12345',podAddress,item);
+          const data = item.analyticsValuesList.filter((a:any ) => {
+            console.log('analyticsValuesList --> podAddress',a.podAddress,podAddress,item)
+            return (podAddress === a?.podAddress) || (a?.podAddress === 'NA')
+          })
+          return {
+            ...item,
+            analyticsValuesList: data
+          }
+        }
+        return item
+        })
+
         return graphsNodes
       }
       const getVal = graphData.reduce((a: any, b: any) => {
         return new Date(a.dateAndTime) > new Date(b.dateAndTime) ? a : b;
       });
 
-      return graphData.filter(item => item.dateAndTime === getVal.dateAndTime)
+      graphsNodes = graphData.filter(item => item.dateAndTime === getVal.dateAndTime).map((item) => {
+        item.analyticsValuesList.sort((a:any, b: any) => (a.entryX > b.entryX ? 1 : -1))
+        return item
+      })
+
+      graphsNodes = graphsNodes.map((item) => {
+        console.log('podAddress12345',podAddress,item,item.recordId);
+        if(podAddress !== 'All') {
+          const data = item.analyticsValuesList.filter((a:any ) => (podAddress === a?.podAddress) || (a?.podAddress === 'NA'))
+          // item['analyticsValuesList'] = data
+          return {
+            ...item,
+            analyticsValuesList: data
+          }
+        }
+        return item
+        })
+
+      return graphsNodes
     }
 
     return []
 
 
-  
-},[getProfile,graphData])
-  console.log('setGraphData',getProfile,getGraphDataFiltered)
-  // const series = Array.isArray(graphData) && graphData.length > 0 ? graphData.map((record) => ({
-  //   name: record.playerName,
-  //   data: record.analyticsValuesList.map((value: any) => ({
-  //     x: value.entryX,
-  //     y: value.entryY,
-  //   })),
-  // })) : [];
-  // const categories = Array.isArray(graphData) && graphData.length > 0 ? graphData[0].analyticsValuesList.map((value: any) => value.entryX) : [];
+},[getProfile,graphData,podAddress])
+  console.log('setGraphData',getGraphDataFiltered,podAddress)
+
+  const xTitle = getGraphDataFiltered.length > 0 ? getGraphDataFiltered[0]?.activityName : "X-axis"
+  const yTitle = getGraphDataFiltered.length > 0 ? getGraphDataFiltered[0]?.categoryName : "Y-axis"
   const options = {
     chart: {
       type: "line",
@@ -101,6 +131,55 @@ const ECommerce = () => {
 
   };
 
+  const getCanvasData = () => {
+    const series: Array<{
+      type: "line";
+      markerSize: number;
+      dataPoints: Array<{
+        x: string;
+        y: number;
+        indexLabel: string;
+        markerColor: string;
+    }>
+    }> = [];
+    getGraphDataFiltered.forEach((item) => {
+      const data: Array< {
+        x: string;
+        y: number;
+        indexLabel: string;
+        markerColor: string;
+    }> = []
+      item.analyticsValuesList.forEach((value: {
+        entryX: string;
+        entryY: number;
+        podColor: "1" | "2" | "3" | "4" | "5" | "6" | "7";
+        podAddress?: string;
+      }) => {
+        const pr = {
+          x: value.entryX,
+          y: (value.entryY/1000),
+          indexLabel: value.entryY?.toString(),
+          markerColor: Bashcolors[value.podColor]
+        }
+        data.push(pr)
+      })
+      series.push({
+        type: "line",
+        markerSize: 10,
+        dataPoints: data
+      })
+    });
+
+
+
+    return series
+  }
+
+  const canvasOptions = {
+    theme: "dark1", // "light1", "light2", "dark1", "dark2"
+    animationEnabled: true,
+    data: getCanvasData()
+  }
   const getSeries = () => {
     // Format the data to create the series for the chart
     const series: Array<{
@@ -144,9 +223,23 @@ const ECommerce = () => {
       data?.getRecordActivity?.data &&
       data?.getRecordActivity?.status === "success"
     ) {
-      setGraphData(data.getRecordActivity.data);
+      console.log('data.getRecordActivity.data',data.getRecordActivity.data);
+      if(Array.isArray(data.getRecordActivity.data)){
+        const getData = data.getRecordActivity.data as any[]
+        // @ts-ignore
+        const sortData = getData.sort((a,b) =>  new Date(b?.dateAndTime * 1000) - new Date(a?.dateAndTime * 1000));
+        setGraphData(getData);
+      }
     }
   };
+
+  useEffect(() => {
+    if(Array.isArray(getGraphDataFiltered) && getGraphDataFiltered.length > 0 && "CanvasJS" in window) {
+      // @ts-ignore
+      var chart = new window.CanvasJS.Chart("chartContainer",canvasOptions)
+      chart.render()
+    }
+  },[getGraphDataFiltered])
 
   return (
     <>
@@ -157,20 +250,30 @@ const ECommerce = () => {
         <h3 className="text-xl font-semibold text-black dark:text-white">
           Analytics
         </h3>
+          <h3 className={`text-base font-semibold text-black `}>Activity Name: {xTitle}</h3>
+        <h3 className={`text-base font-semibold  text-black`}>Category Name: {yTitle}</h3>
       </div>
       <div className="mb-2">
-        <div id="chartFour" className="-ml-5">
+        <div id="chartFour" className="-ml-5 h-[350] w-[]">
           {/* @ts-ignore */}
-          <ReactApexChart
+          {/* <ReactApexChart
             options={options}
             series={getSeries()}
             type="line"
             height={350}
-          />
+          /> */}
+          <div >
+          <div id="chartContainer" style={containerProps} />
+
+          </div>
+          {/* <CanvasJSChart options={canvasOptions} containerProps={containerProps} /> */}
         </div>
       </div>
+      <div>
+        <DetailCard />
+      </div>
     </div>
-      <div className=''>
+      <div className='w-100'>
       {/* <Button className='bg-[#7584a1] p-3 text-center text-white rounded-md' onClick={() => setselectProfiles((prev: any) => {
                 if(Array.isArray(prev) && prev.length > 0 ){
                     return []
@@ -183,11 +286,11 @@ const ECommerce = () => {
             <h5 className='text-base font-semibold'>Date: {dateTime}</h5>
       </div>
       </div>
-      <div className='mt-3 grid grid-cols-2 gap-2'>
+      <div className='mt-3 chartGrid'>
       <ProfileAnalyticsCard />
       </div>
 
-      <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
+      {/* <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
         <ChartOne />
         <ChartTwo />
         <ChartThree />
@@ -196,7 +299,7 @@ const ECommerce = () => {
           <TableOne />
         </div>
         <ChatCard />
-      </div>
+      </div> */}
     </>
   );
 };

@@ -39,7 +39,7 @@ export default function ProfileAnalyticsCard() {
         <>
             {
                 Array.isArray(graphData) && graphData.length > 0 && graphData.map((item: any) => {
-                    return             <CardTwo firstName={item.playerName} lastName={item.lastName} playerId={item.recordId} activityName={item.activityName} />
+                    return             <CardTwo firstName={item.playerName} lastName={item.lastName} playerId={item.recordId} activityName={item.activityName} rawData={item} />
                 })
             }
 
