@@ -19,27 +19,28 @@ const CardTwo = ({firstName = "",lastName = "",playerId = "",activityName = "",r
   const getDateTime = moment.unix(rawData?.dateAndTime).format('DD-MM-YYYY hh:mm a')
 
   return (
-    <div  className={`relative rounded-md border overflow-hidden border-stroke shadow-default max-h-34 z-auto h-35 dark:border-strokedark cursor-pointer dark:bg-boxdark ${profile.includes(playerId) ? `bg-[#535f7759]` : `bg-[#ffffff12]` }`} onClick={() => setProfile((prev: any) => {
+    <div  className={`relative rounded-md border overflow-hidden shadow-2xl border-stroke max-h-34 z-auto h-35  cursor-pointer`} onClick={() => setProfile((prev: any) => {
       if(prev.includes(playerId)) {
         return prev.filter((item: any) => item !== playerId)
       }
 
       return [...prev,playerId]
     })}>
-    <div className="absolute z-[-1]">
+    <div className={`absolute z-[1] ${profile.includes(playerId) ? `bg-[#535f7759] dark:bg-[#535f7759]` : `bg-[#ffffff12] dark:bg-[#ffffff12]` } `}>
     <img src={Gym} className="w-[100vw] bg-[bottom] bg-no-repeat object-cover" alt="" />
     </div>
-    <div className="relative top-0 right-0">
+    <div className="relative top-0 right-0 z-20">
       <div className='absolute right-4 top-4 w-25 h-25 bg-[#07193fa3] rounded-md flex flex-col gap-2 justify-center items-center'>
-      <div className="h-11.5 w-11.5  bg-meta-2 dark:bg-meta-4 rounded-full ">
+      <div className="h-11.5 w-11.5  bg-meta-2 dark:bg-meta-2 rounded-full ">
     {/* <GymIcon /> */}
     <img src={PersonPlaceHolder} className="w-11.5 h-11.5 rounded-full" alt="" />
       </div>
       <h5 className="text-xs text-white text-center">  {firstName + " " + lastName}</h5>
       </div>
     </div>
-
-    <div className="mt-4 ml-4 flex items-end justify-between">
+    <div className={`relative w-full max-h-34 z-[2] h-35  ${profile.includes(playerId) ? `bg-[#535f7759] dark:bg-[#535f7759]` : `bg-[#ffffff12] dark:bg-[#ffffff12]` }`}>
+    </div>
+    <div className="absolute top-0 left-0 mt-4 ml-4 flex items-end justify-between z-20">
       <div className="flex flex-col justify-start">
         <h4 className={`text-title-md font-bold  ${profile.includes(playerId) ? `text-white` : 'text-white' } dark:text-white`}>
           {firstName + " " + lastName}

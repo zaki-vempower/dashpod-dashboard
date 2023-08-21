@@ -1,4 +1,4 @@
-const GetRecordQuery = (accountID,lastDateTime = "2023-03-21") => `query getRecordActivity {
+const GetRecordQuery = (accountID,lastDateTime = "2023-06-21") => `query getRecordActivity {
   getRecordActivity(accountId: "${accountID}", last_upd_time: "${lastDateTime}") {
     status
     data {

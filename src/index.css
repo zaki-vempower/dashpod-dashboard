@@ -194,7 +194,9 @@ span.flatpickr-weekday,
   .chartGrid {
     @apply  grid grid-cols-1 gap-2
   }
-  
+  .filterGrid {
+    @apply  grid grid-cols-1 gap-2
+  }
 }
 
 @media (min-width: 800px) {
@@ -202,4 +204,7 @@ span.flatpickr-weekday,
     @apply  grid grid-cols-2 gap-2
   }
   
+  .filterGrid {
+    @apply  grid grid-cols-3 gap-2
+  }
 }

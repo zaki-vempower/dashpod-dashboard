@@ -4,11 +4,47 @@ import DarkModeSwitcher from './DarkModeSwitcher';
 import DropdownMessage from './DropdownMessage';
 import DropdownNotification from './DropdownNotification';
 import DropdownUser from './DropdownUser';
+import { useEffect } from 'react';
+import { API, graphqlOperation } from 'aws-amplify';
+import { useAtom } from 'jotai';
+import { filterSubmit, selectProfiles, useGraphData, useUserProfile, userData } from '../store/dashboardAtom';
+import GetProfile from '../graphqlQueries/GetProfile';
+import { ProfileType } from '../store/storeType';
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
+  const [user,] = useAtom(userData);
+  const [,setProfileUser] = useAtom(useUserProfile)
+  const fetchProfile = async () => {
+    const { data } = await API.graphql(graphqlOperation(GetProfile, { accountId: user?.sub })) as {
+      data: {
+        getProfiles: {
+          status: string;
+          data: {
+
+          }
+        }
+      }
+    };
+    console.log('dataaa',data)
+    if (
+      data?.getProfiles?.data &&
+      data?.getProfiles?.status === "success" && 
+      Array.isArray(data?.getProfiles.data) &&
+      data?.getProfiles.data.length > 0
+    ) {
+      const getUserProfile = data?.getProfiles.data.find((it: ProfileType) => it.profileId === 1)
+      if(getUserProfile) {
+        setProfileUser(getUserProfile as ProfileType)
+      }
+      console.log('filterSubmit, selectProfiles,',getUserProfile)
+    }
+  }
+  useEffect(() => {
+    fetchProfile()
+  }, [])
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between py-4 px-4 shadow-2 md:px-6 2xl:px-11">
@@ -64,7 +100,7 @@ const Header = (props: {
         <div className="hidden sm:block">
           <form action="https://formbold.com/s/unique_form_id" method="POST">
             <div className="relative">
-              <button className="absolute top-1/2 left-0 -translate-y-1/2">
+              {/* <button className="absolute top-1/2 left-0 -translate-y-1/2">
                 <svg
                   className="fill-body hover:fill-primary dark:fill-bodydark dark:hover:fill-primary"
                   width="20"
@@ -92,7 +128,7 @@ const Header = (props: {
                 type="text"
                 placeholder="Type to search..."
                 className="w-full bg-transparent pr-4 pl-9 focus:outline-none"
-              />
+              /> */}
             </div>
           </form>
         </div>
@@ -100,7 +136,7 @@ const Header = (props: {
         <div className="flex items-center gap-3 2xsm:gap-7">
           <ul className="flex items-center gap-2 2xsm:gap-4">
             {/* <!-- Dark Mode Toggler --> */}
-            <DarkModeSwitcher />
+            {/* <DarkModeSwitcher /> */}
             {/* <!-- Dark Mode Toggler --> */}
 
             {/* <!-- Notification Menu Area --> */}

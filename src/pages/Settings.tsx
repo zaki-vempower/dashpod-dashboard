@@ -1,7 +1,11 @@
+import { useAtom } from 'jotai';
 import Breadcrumb from '../components/Breadcrumb';
 import userThree from '../images/user/user-03.png';
+import { useUserProfile } from '../store/dashboardAtom';
+import userSix from '../images/product/default-profile-icon-6.jpg';
 
 const Settings = () => {
+  const [profileUser,] = useAtom(useUserProfile)
   return (
     <>
       <div className="mx-auto max-w-270">
@@ -57,7 +61,7 @@ const Settings = () => {
                           name="fullName"
                           id="fullName"
                           placeholder="Devid Jhon"
-                          defaultValue="Devid Jhon"
+                          defaultValue={profileUser ? profileUser?.firstName + ' ' + profileUser.lastName : 'David John'}
                         />
                       </div>
                     </div>
@@ -74,8 +78,8 @@ const Settings = () => {
                         type="text"
                         name="phoneNumber"
                         id="phoneNumber"
-                        placeholder="+990 3343 7865"
-                        defaultValue="+990 3343 7865"
+                        placeholder="+91 3343 78656"
+                        defaultValue={profileUser ? profileUser?.mobileNumber : '+91 3343 78656'}
                       />
                     </div>
                   </div>
@@ -119,7 +123,7 @@ const Settings = () => {
                         name="emailAddress"
                         id="emailAddress"
                         placeholder="devidjond45@gmail.com"
-                        defaultValue="devidjond45@gmail.com"
+                        defaultValue={profileUser ? profileUser.emailId : "devidjond45@gmail.com"}
                       />
                     </div>
                   </div>
@@ -137,7 +141,7 @@ const Settings = () => {
                       name="Username"
                       id="Username"
                       placeholder="devidjhon24"
-                      defaultValue="devidjhon24"
+                      defaultValue={profileUser ? profileUser.firstName : "devidjhon24"}
                     />
                   </div>
 
@@ -220,7 +224,9 @@ const Settings = () => {
                 <form action="#">
                   <div className="mb-4 flex items-center gap-3">
                     <div className="h-14 w-14 rounded-full">
-                      <img src={userThree} alt="User" />
+                      <img src={userSix} alt="User rounded-full" style={{
+                        borderRadius: '100%'
+                      }} />
                     </div>
                     <div>
                       <span className="mb-1.5 text-black dark:text-white">

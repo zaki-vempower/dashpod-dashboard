@@ -4,10 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import UserOne from '../images/user/user-01.png';
 import { Auth } from 'aws-amplify';
 import { toast } from 'react-hot-toast';
+import { useAtom } from 'jotai';
+import { useUserProfile } from '../store/dashboardAtom';
+import PersonPlaceHolder from "../images/product/person-placeholder.jpg";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const navigate = useNavigate()
+  // const navigate = useNavigate();
+  const [profileUser,] = useAtom(useUserProfile)
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
 
@@ -56,13 +60,13 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            {profileUser?.firstName + ' ' + profileUser?.lastName}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">{profileUser?.emailId}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
-          <img src={UserOne} alt="User" />
+          <img src={PersonPlaceHolder} alt="User" className='h-12 w-12 rounded-full' />
         </span>
 
         <svg

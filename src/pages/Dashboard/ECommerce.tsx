@@ -3,11 +3,13 @@ import { useAtom } from 'jotai';
 import { useEffect, useMemo, useState } from 'react';
 import { API, graphqlOperation } from 'aws-amplify';
 import GetRecordQuery from '../../graphqlQueries/GetRecordQuery.js';
-import { selectpodAddress, useGraphData, useProfiles, userData } from '../../store/dashboardAtom.ts';
+import { selectProfiles, selectpodAddress, useGraphData, useProfiles, userData } from '../../store/dashboardAtom.ts';
 import ProfileAnalyticsCard from '../ProfileCards/ProfileAnalyticsCard.tsx';
 import { Bashcolors } from '../../util.ts';
 import moment from 'moment';
 import DetailCard from './DetailCard.tsx';
+import FilterCard from './FilterCard.tsx';
+import { AiOutlineDownload,AiOutlineShareAlt } from 'react-icons/ai'
 const containerProps = {
   width: '100%',
   height: 350,
@@ -21,6 +23,7 @@ const containerProps = {
 const ECommerce = () => {
   const [graphData, setGraphData] = useAtom(useGraphData);
   const [getProfile,] = useAtom(useProfiles)
+  const [profiles, setselectProfiles] = useAtom(selectProfiles)
   const [user,] = useAtom(userData);
   const [dateTime,] = useState(moment().format('DD-MM-YYYY hh:mm a'))
   const [podAddress,] = useAtom(selectpodAddress);
@@ -40,8 +43,8 @@ const ECommerce = () => {
   const getGraphDataFiltered = useMemo(() => {
     let graphsNodes: any[] =[];
     if(Array.isArray(graphData) && graphData.length > 0) {
-      if(getProfile.length > 0){
-        for(let it of getProfile){
+      if(profiles.length > 0){
+        for(let it of profiles){
           const filterGraph = graphData.filter((item: any) => item.recordId === it)
           console.log('calculateAverage',graphsNodes,podAddress,graphData,it,filterGraph)
           graphsNodes = [...graphsNodes,...filterGraph]
@@ -98,7 +101,7 @@ const ECommerce = () => {
     return []
 
 
-},[getProfile,graphData,podAddress])
+},[profiles,graphData,podAddress])
   console.log('setGraphData',getGraphDataFiltered,podAddress)
 
   const xTitle = getGraphDataFiltered.length > 0 ? getGraphDataFiltered[0]?.activityName : "X-axis"
@@ -177,9 +180,13 @@ const ECommerce = () => {
 
   const canvasOptions = {
     theme: "dark1", // "light1", "light2", "dark1", "dark2"
+    toolTip: {
+      shared: true  //disable here. 
+    },
     animationEnabled: true,
     data: getCanvasData()
   }
+
   const getSeries = () => {
     // Format the data to create the series for the chart
     const series: Array<{
@@ -236,8 +243,14 @@ const ECommerce = () => {
   useEffect(() => {
     if(Array.isArray(getGraphDataFiltered) && getGraphDataFiltered.length > 0 && "CanvasJS" in window) {
       // @ts-ignore
-      var chart = new window.CanvasJS.Chart("chartContainer",canvasOptions)
+      const chart = new window.CanvasJS.Chart("chartContainer",canvasOptions)
       chart.render()
+      const exportChart = document.getElementById("exportChart")
+      if(exportChart) {
+        exportChart.addEventListener("click",function(){
+            chart.exportChart({format: "jpg"});
+          }); 
+      }
     }
   },[getGraphDataFiltered])
 
@@ -246,12 +259,22 @@ const ECommerce = () => {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         {/* <CardOne /> */}
         <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5">
-      <div>
-        <h3 className="text-xl font-semibold text-black dark:text-white">
+      <div className='flex flex-row justify-between mb-2'>
+    <div className=''>
+    <h3 className="text-xl font-semibold text-black dark:text-white">
           Analytics
         </h3>
-          <h3 className={`text-base font-semibold text-black `}>Activity Name: {xTitle}</h3>
-        <h3 className={`text-base font-semibold  text-black`}>Category Name: {yTitle}</h3>
+          <h3 className={`text-base font-semibold text-black dark:text-white  `}>Activity Name: {xTitle}</h3>
+        <h3 className={`text-base font-semibold  text-black dark:text-white `}>Category Name: {yTitle}</h3>
+    </div>
+    <div>
+      <div className="w-7 h-7 cursor-pointer" id="exportChart">
+      <AiOutlineDownload color="#d52905" />
+      </div>
+      <div className="w-7 h-7 cursor-pointer">
+      <AiOutlineShareAlt color="#d52905"/>
+      </div>
+    </div>
       </div>
       <div className="mb-2">
         <div id="chartFour" className="-ml-5 h-[350] w-[]">
@@ -271,9 +294,14 @@ const ECommerce = () => {
       </div>
       <div>
         <DetailCard />
+
       </div>
     </div>
-      <div className='w-100'>
+          <div className='flex flex-col w-[75vw]'>
+          <div className='w-[100%]'>
+    <FilterCard />
+    </div>
+      <div className='flex flex-row justify-between items-center my-4'>
       {/* <Button className='bg-[#7584a1] p-3 text-center text-white rounded-md' onClick={() => setselectProfiles((prev: any) => {
                 if(Array.isArray(prev) && prev.length > 0 ){
                     return []
@@ -284,7 +312,9 @@ const ECommerce = () => {
                 View Analytics
             </Button> */}
             <h5 className='text-base font-semibold'>Date: {dateTime}</h5>
+            <button className="inline-flex items-center justify-center rounded-md bg-[#d52905] py-2 px-5 text-center font-medium text-white hover:bg-opacity-90 lg:px-6 xl:px-7" onClick={() => setselectProfiles(getProfile)}>View Analytics</button>
       </div>
+          </div>
       </div>
       <div className='mt-3 chartGrid'>
       <ProfileAnalyticsCard />

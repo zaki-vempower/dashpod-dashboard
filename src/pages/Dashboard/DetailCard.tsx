@@ -1,16 +1,15 @@
 import { useAtom } from 'jotai';
-import React, { useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { selectpodAddress, useGraphData, useProfiles } from '../../store/dashboardAtom';
-import { Bashcolors, calculateAverage, letterColors } from '../../util';
+import { useMemo } from 'react'
+import { selectProfiles, selectpodAddress, useGraphData, useProfiles } from '../../store/dashboardAtom';
+import { Bashcolors, calculateAverage } from '../../util';
 
 export default function DetailCard() {
     const [podAddress, setPodAddress] = useAtom(selectpodAddress);
     const [graphData,] = useAtom(useGraphData);
-    const [getProfile,] = useAtom(useProfiles)
-
+    // const [profiles,] = useAtom(useProfiles)
+    const [profiles, setselectProfiles] = useAtom(selectProfiles)
     const { average, maxValue,minValue} = useMemo(() => {
-      if(!Array.isArray(graphData) ||  graphData.length === 0) {
+      if(!Array.isArray(graphData) ||  graphData.length === 0 ) {
         return {
           average: 0,
           minValue: 0,
@@ -20,8 +19,8 @@ export default function DetailCard() {
       
       let graphsNodes:any[] = []
       const yValues: number[] = []
-      if(getProfile.length > 0){
-      for(let it of getProfile){
+      if(profiles.length > 0){
+      for(let it of profiles){
         const filterGraph = graphData.filter((item: any) => item.recordId === it)
         console.log('calculateAverage',graphsNodes,podAddress,graphData,it,filterGraph)
         graphsNodes = [...graphsNodes,...filterGraph]
@@ -96,7 +95,7 @@ export default function DetailCard() {
       minValue: getMinValue.toFixed(2),
       maxValue: getMaxValue.toFixed(2)
     }
-    }, [graphData,getProfile,podAddress])
+    }, [graphData,profiles,podAddress])
 
 
     const getDynamicPodAddress = useMemo(() => {
@@ -106,8 +105,8 @@ export default function DetailCard() {
           podAddress: string;
           podColor: "1" | "2" | "3" | "4" | "5" | "6" | "7";
         }[] = []
-        if(getProfile.length > 0){
-        for(let it of getProfile){
+        if(profiles.length > 0){
+        for(let it of profiles){
           const filterGraph = graphData.filter((item: any) => item.recordId === it)
           console.log('calculateAverage',graphsNodes,podAddress,graphData,it,filterGraph)
           graphsNodes = [...graphsNodes,...filterGraph]
@@ -158,7 +157,7 @@ export default function DetailCard() {
       }
 
       return []
-    },[graphData,getProfile])
+    },[graphData,profiles,podAddress])
     
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
