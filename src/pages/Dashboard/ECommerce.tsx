@@ -138,6 +138,8 @@ const ECommerce = () => {
     const series: Array<{
       type: "line";
       markerSize: number;
+      showInLegend: boolean;
+      legendText: string;
       dataPoints: Array<{
         x: string;
         y: number;
@@ -168,6 +170,8 @@ const ECommerce = () => {
       })
       series.push({
         type: "line",
+        showInLegend: true, 
+        legendText: item?.playerName,
         markerSize: 10,
         dataPoints: data
       })
