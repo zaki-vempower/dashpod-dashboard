@@ -1,5 +1,5 @@
 {
-  "name": "tailadmin-react-free",
+  "name": "dashpod-react",
   "private": true,
   "version": "1.0.5",
   "type": "module",
@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "author": {
-    "name": "TailAdmin",
-    "email": "hello@tailadmin.com",
-    "url": "https://tailadmin.com"
+    "name": "Dashpod",
+    "email": "hello@dashpod.com",
+    "url": "https://dashpod.in"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^4.6.0",
@@ -44,6 +44,7 @@
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.10.1",
+    "react-iframe": "^1.8.5",
     "react-phone-input-2": "^2.15.1",
     "react-phone-number-input": "^3.2.22",
     "react-router-dom": "^6.8.1",

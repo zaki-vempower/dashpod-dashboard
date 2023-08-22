@@ -9,6 +9,9 @@ import { Amplify } from "aws-amplify";
 import awsconfig from "./aws-exports";
 import { useAuth } from './hooks/useAuth';
 import CreateProfile from './pages/Authentication/CreateProfile';
+import DashpodBlogs from './components/DashpodBlogs';
+import DashpodSupport from './components/DashpodSupport';
+import DashpodWebsite from './components/DashpodWebsite';
 const Calendar = lazy(() => import('./pages/Calendar'));
 const Chart = lazy(() => import('./pages/Chart'));
 const FormElements = lazy(() => import('./pages/Form/FormElements'));
@@ -96,6 +99,30 @@ function App() {
             element={
               <Suspense fallback={<Loader />}>
                 <Tables />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/blogs"
+            element={
+              <Suspense fallback={<Loader />}>
+                <DashpodBlogs />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/support"
+            element={
+              <Suspense fallback={<Loader />}>
+                <DashpodSupport />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/dashpod"
+            element={
+              <Suspense fallback={<Loader />}>
+                <DashpodWebsite />
               </Suspense>
             }
           />

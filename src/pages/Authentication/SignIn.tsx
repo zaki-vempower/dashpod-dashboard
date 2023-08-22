@@ -275,14 +275,14 @@ const SignIn = () => {
                   Sign in with Google
                 </button> */}
 
-                <div className="mt-6 text-center">
+                {/* <div className="mt-6 text-center">
                   <p>
                     Don’t have any account?{' '}
                     <Link to="/auth/signup" className="text-primary">
                       Sign Up
                     </Link>
                   </p>
-                </div>
+                </div> */}
               </form>
             </div>
           </div>

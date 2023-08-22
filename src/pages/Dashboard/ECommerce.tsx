@@ -273,10 +273,10 @@ const ECommerce = () => {
     </div>
     <div>
       <div className="w-7 h-7 cursor-pointer" id="exportChart">
-      <AiOutlineDownload color="#d52905" />
+      <AiOutlineDownload color="#d52905" size="20" />
       </div>
       <div className="w-7 h-7 cursor-pointer">
-      <AiOutlineShareAlt color="#d52905"/>
+      <AiOutlineShareAlt color="#d52905" size="20"/>
       </div>
     </div>
       </div>
